@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa de Crimes na UnB</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.2/dist/leaflet.css"
+    integrity="sha256-sA+zWATbFveLLNqWO2gtiw3HL/lh1giY/Inf1BJ0z14="
+    crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+    <script src="https://unpkg.com/leaflet@1.9.2/dist/leaflet.js"
+    integrity="sha256-o9N1jGDZrf5tS+Ft4gbIK7mYMipq9lqpVJ91xHSyKhg="
+    crossorigin=""></script>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="icon" href="img/siren.png" type="image/icon type">
+    <script src="js/dados.js"></script>
+</head>
+
+    <div class="bloco_1">
+        <div class="fundo" style="background-image: url('img/unb.png');">
+            <div class="presentation">
+                <h1>Polos de <span style="color: red;">crimes</span> na UnB</h1>
+                <div id="sutia-container">
+                    <p id='sutia' style="margin : 0; padding-top:0;">Famoso por sediar festas universitárias, o Centro Comunitário registrou mais de 300 crimes nos últimos sete anos. Dos casos, cerca de 96% correspondem a furtos e roubos</p>
+                </div>
+                <p id="autoria">
+                    <strong>
+                        Mateus Salomão</strong>. Publicado em 19 de outubro de 2020</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bloco_2">
+        <div class="artigo" style="margin-top: 60px;">
+            <p class="texto" id="primeiro">O Centro Comunitário Athos Bulcão é a área mais violenta do campus Darcy Ribeiro da Universidade de Brasília (UnB). A conclusão se baseia em dados, de 2015 a julho de 2022, de boletins de ocorrência da Polícia Civil do DF, obtidos via Lei de Acesso à Informação.</p>
+            <p class="texto">A tenda que recebe festas e cerimônias, incluindo o estacionamento e proximidades, registrou 284 furtos e 22 roubos, além de 11 casos de lesão corporal. Houve também um caso de estupro e um de dano — que consiste em destruir, inutilizar ou deteriorar bens alheios. Quase 78% desses crimes ocorreram entre 2015 e 2016.</p>
+            <p class="texto">Por meio de nota, a UnB explicou que a redução após 2017 coincide com a criação do Comitê Consultivo Permanente para a Gestão de Segurança. O colegiado elabora políticas de segurança e delega a operacionalização para as instâncias e órgãos competentes.</p>
+            <p class="texto">Desde a criação do comitê, afirma a nota, "a Universidade investiu na instalação de câmeras de videomonitoramento. São, hoje, mais de 600 câmeras nos quatro campi.  Também foram colocadas as cadeiras elevadas no campus Darcy Ribeiro para que os vigilantes tenham visão ampla dos estacionamentos”.</p>
+            <br>
+            <p class="texto" style="font-size: 20px; font-family: Arial, Helvetica, sans-serif; color: red; margin-bottom: 0; text-align: left;"><strong>Mapa de crimes</strong></p>
+            <hr style="margin-top: 0; color:red; height:2px; border-width:0; background-color: red;">
+            <p class="texto">O levantamento mapeia crimes de furto, roubo, lesão corporal e dano. Além disso, considera casos de assédio sexual, que ocorre ao obter vantagem sexual valendo-se de hierarquia; importunação sexual, que descreve a prática de ato libidinoso na presença de alguém sem autorização; e importunação ofensiva ao pudor, contravenção penal que contemplava até 2018 o que hoje é crime de importunação sexual. Devido a imprecisões nos dados da PCDF, dos cerca de 1,3 mil registros de crimes analisados, apenas 990 são representados no mapa em locais aproximados</p>
+        </div>
+    </div>
+
+    <div id="map" ></div>
+
+    <div class="bloco_3">
+        <div class="artigo">
+            <p style="text-align: center;">
+            <button onclick="mapa_escuro()" style="margin-right: 8px;">Mapa</button><button onclick="mapa_satelite()">Satélite</button><button onclick="mapa_localidades()">Locais</button>
+            </p>
+            <br>
+            <div>
+                <p class="texto" style="font-size: 20px; font-family: Arial, Helvetica, sans-serif; color: red; margin-bottom: 0; text-align: left;"><strong>Texto original</strong></p>
+                <hr style="margin-top: 0; color:red; height:2px; border-width:0; background-color: red;">
+                <p class="texto">O levantamento exclusivo sobre os crimes cometidos no campus Darcy Ribeiro, com base em dados de boletins de ocorrência da PMDF, foi originalmente publicado na edição nº 454 do jornal laboratório <em>Campus</em>. A publicação produzida por alunos da Faculdade de Comunicação (FAC) da Universidade de Brasília também apresenta outras quatro reportagens, que podem ser acessada <a href="https://issuu.com/campusunb/docs/jornal_campus_-_n_454_setembro_2022_" target="_blank">neste link.</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bloco_4" style="height: 10%;">
+
+    </div>
+
+    <script>
+
+        var map = L.map('map', { zoomControl: false }).setView([-15.762878504280932, -47.867230061850826], 15.5);
+
+        map.touchZoom.disable();
+        map.doubleClickZoom.disable();
+        map.scrollWheelZoom.disable();
+        map.boxZoom.disable();
+        map.keyboard.disable();
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20,
+        }).addTo(map);
+
+        for (var i = 0; i < df.length; i++) {
+            marker = new L.circle([df[i]['LAT'], df[i]['LON']], 
+            {color: 'red', 
+            fillColor: '#f03', 
+            fillOpacity: 0.5, 
+            radius: df[i]['QUANTIDADE']/2})
+            .bindPopup(`<p style="font-size:12px; color:black; font-family:Arial; margin:0; font-weight: bold;">${df[i]['LUGAR']}</p><p style="margin:0;font-size:12px;">Nº de crimes: ${df[i]['QUANTIDADE']}</p>`)
+            .addTo(map);
+        }
+
+        var popup = L.popup()
+            .setLatLng([-15.762878504280932, -47.867230061850826])
+            .setContent(`<span style="color:red;">Arraste para explorar o mapa!</span>`)
+            .openOn(map);
+
+        function mapa_escuro(){
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map)
+            }
+
+        function mapa_satelite(){
+            L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                maxZoom: 20
+            }).addTo(map)
+            }
+
+        function mapa_localidades(){
+            L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+                maxZoom: 20
+            }).addTo(map)
+        }
+
+    </script>
+
+</body>
+</html>
